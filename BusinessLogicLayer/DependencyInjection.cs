@@ -2,9 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using FluentValidation;
 using eCommerce.OrdersMicroservice.BusinessLogicLayer.Validators;
-using eCommerce.ordersMicroservice.BusinessLogicLayer.Mappers;
+using eCommerce.OrdersMicroservice.BusinessLogicLayer.Mappers;
 using eCommerce.OrdersMicroservice.BusinessLogicLayer.ServiceContracts;
-using eCommerce.ordersMicroservice.BusinessLogicLayer.Services;
+using eCommerce.OrdersMicroservice.BusinessLogicLayer.Services;
+using eCommerce.OrdersMicroservice.BusinessLogicLayer.RabbitMQ;
 
 
 namespace eCommerce.OrdersMicroservice.BusinessLogicLayer;
@@ -24,6 +25,15 @@ public static class DependencyInjection
         {
             options.Configuration = $"{configuration["REDIS_HOST"]}:{configuration["REDIS_PORT"]}";
         });
+
+
+        services.AddTransient<IRabbitMQProductNameUpdateConsumer, RabbitMQProductNameUpdateConsumer>();
+
+        services.AddTransient<IRabbitMQProductDeletionConsumer, RabbitMQProductDeletionConsumer>();
+
+        services.AddHostedService<RabbitMQProductNameUpdateHostedService>();
+
+        services.AddHostedService<RabbitMQProductDeletionHostedService>();
 
         return services;
     }
